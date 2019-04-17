@@ -225,9 +225,4 @@ for (i in 1:1000) {
 
 head(beta.compare)
 apply(beta.compare,2,mean)
-apply(beta.compare,2,sd)
 apply(beta.compare,2,var)
-
-beta1 <- beta.compare[,c(1,4,7)]
-beta2 <- beta.compare[,c(2,5,8)]
-beta3 <- beta.compare[,c(3,6,9)]
