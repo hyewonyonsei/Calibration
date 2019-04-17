@@ -202,7 +202,7 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   # (summary(model_cal))
   
   compare <- c(beta, base_model$coefficients, model_cal$coefficients)
-  #colnames(compare) <- c("beta0", "Traditional", "Calibrated") 
+  # colnames(compare) <- c("beta0", "Traditional", "Calibrated") 
   return(compare)
 }
 # set.seed(20190419)
@@ -215,7 +215,7 @@ gam = c(rep(1,num.subc))
 theta = 0.25 
 
 beta.compare <- matrix(rep(0,1000*9), ncol=9)
-system.time(
+time.elapse <- system.time(
 
 for (i in 1:1000) {
   set.seed(i)
@@ -223,7 +223,11 @@ for (i in 1:1000) {
 }
 )
 
+head(beta.compare)
+apply(beta.compare,2,mean)
+apply(beta.compare,2,sd)
+apply(beta.compare,2,var)
 
-calibration(1000,2,Sigma,0,0,beta,lamzero,gam,0.25)
-
-
+beta1 <- beta.compare[,c(1,4,7)]
+beta2 <- beta.compare[,c(2,5,8)]
+beta3 <- beta.compare[,c(3,6,9)]
