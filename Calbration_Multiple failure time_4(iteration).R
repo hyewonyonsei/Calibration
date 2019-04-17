@@ -7,7 +7,7 @@ library(survey)
 library(dplyr)
 library(MASS)
 
-calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, theta) {
+calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam, theta) {
   # Data generation
   # Creating a full cohort dataset: c1, c2 - 2 covariates used in the model, 
   # c3 - auxiliary cov, associated with c2
@@ -26,8 +26,8 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   # tt <- c()
   tt1 = (-log(1-u)*(exp(-z%*%beta)*(1/lamzero[1])))^(1/gam[1])
   tt = tt1
-  if (num.subc>1) {
-    for (i in 2:num.subc) {
+  if (k>1) {
+    for (i in 2:k) {
       ui <- runif(num.pop)
       z1i <- rbinom(num.pop,1,0.5) # bernoulli
       z_ctsi <- mvrnorm(n=num.pop, c(u2,u3), Sigma) # multivariate normal
@@ -43,16 +43,16 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   
   ##### Censoring #####
   # cmax = 2 
-  censor <- matrix(nrow=num.pop, ncol=num.subc)
-  delta <- matrix(nrow=num.pop, ncol=num.subc)
-  time_obs <- matrix(nrow=num.pop, ncol=num.subc)
-  for (i in 1:num.subc) {
-    censor[,i] = runif(num.pop,0,1) #) Modest censoring assumption by Cai and Shen (2000)
+  censor <- matrix(nrow=num.pop, ncol=k)
+  delta <- matrix(nrow=num.pop, ncol=k)
+  time_obs <- matrix(nrow=num.pop, ncol=k)
+  for (i in 1:k) {
+    censor[,i] = runif(num.pop,0,0.1) #) Modest censoring assumption by Cai and Shen (2000)
     delta[,i] = (tt[,i]<=censor[,i])*1
     time_obs[,i] = tt[,i]*delta[,i] + censor[,i]*(1-delta[,i])
   }
   id = 1:num.pop
-  colnames(z) <- paste0("c",c(rep(1:num.subc,each=p)),".",c(rep(1:p)))
+  colnames(z) <- paste0("c",c(rep(1:k,each=p)),".",c(rep(1:p)))
   data.full <- data.frame(id = id, time1=time_obs[,1], time2=time_obs[,2], 
                           delta1 = delta[,1], delta2 = delta[,2], 
                           c1.1 = z[,1], c1.2 = z[,2], c1.3 = z[,3],
@@ -76,12 +76,18 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   # Creating indicators and conduct sampling ------------------------------------;
   idx.case <- data.full$id[data.full$case==1]                      # idx.case: ids for cases only 
   idx.cont <- data.full$id[data.full$case==0 & data.full$strt==2] # idx.cont2: ids for censored subjects in the cohort
-  # sampling subcohort controls - 20% of controls and 20% of cases will be selected
-  snuma <- 0.2*length(idx.case)
-  snumo <- 0.2*length(idx.cont)
-  idx.case2 <- sample(idx.case, size=snuma)
-  idx.cont2 <- sample(idx.cont, size=snumo)
-  idx.sample <- sort(c(idx.case2,idx.cont2))
+  # sampling subcohort controls
+  idx.scont2<-sample(idx.cont, size=num.subc)
+  #idx.case2<-sample(idx.case,size=ceiling(num.case*0.8))
+  idx.sample<-sort(c(t(idx.case),t(idx.scont2)))           # idx.sample: ids for cch sample
+  #idx.sample<-sort(cbind(t(idx.case2),t(idx.scont2))) 
+  
+  # # sampling subcohort controls - 20% of controls and 20% of cases will be selected
+  # snuma <- 0.2*length(idx.case)
+  # snumo <- 0.2*length(idx.cont)
+  # idx.case2 <- sample(idx.case, size=snuma)
+  # idx.cont2 <- sample(idx.cont, size=snumo)
+  # idx.sample <- sort(c(idx.case2,idx.cont2))
   
   # data.full$contind = c(rep(0,num.pop))
   # data.full$contind[idx.scont2] <- 1                           # contind: indicator for censored subjecrts in the subcohort  
@@ -97,10 +103,10 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   data.full$subcind <- as.numeric(data.full$id %in% data.sampled$id)
   
   ##### To a long form #####
-  idl <- c(rep(1:num.pop, each=num.subc))
+  idl <- c(rep(1:num.pop, each=k))
   timel <- as.vector(t(time_obs))
   deltal <- as.vector(t(delta))
-  ztemp <- matrix(nrow=num.pop*num.subc, ncol=p)
+  ztemp <- matrix(nrow=num.pop*k, ncol=p)
   for(i in 1:p) {
     colnames(ztemp) <- paste0("z",1:p)
     ztemp[,i] <- as.vector(t(cbind(z[,c(i,i+p)])))
@@ -159,8 +165,8 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   data.long.db <- cbind(data.long,db) #head(data.long.db)
   
   ##### Back to the short form #####
-  db.short <- cbind(matrix(data.long.db$db1,ncol=num.subc),matrix(data.long.db$db2,ncol=num.subc),matrix(data.long.db$db3,ncol=num.subc))
-  colnames(db.short) <- paste0("db",c(rep(1:ncol(db),each=num.subc)),".",1:num.subc)
+  db.short <- cbind(matrix(data.long.db$db1,ncol=k),matrix(data.long.db$db2,ncol=k),matrix(data.long.db$db3,ncol=k))
+  colnames(db.short) <- paste0("db",c(rep(1:ncol(db),each=k)),".",1:k)
   short.db <- cbind(data.full, db.short)
   
   db.sum <- cbind(db.short[,1]+db.short[,2],db.short[,3]+db.short[,4])
@@ -184,7 +190,7 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   dcal <- calibrate(dstrt, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="raking", eps=0.0001)
   sample.f <- model.frame(dstrt)
   # head(weights(dcal)); head(sample.f)
-  calw <- rep(weights(dcal), each=num.subc)
+  calw <- rep(weights(dcal), each=k)
   # calw[calw<0]
   
   ##### Fitting to Cox regression for multiple failure time data #####
@@ -206,20 +212,19 @@ calibration <- function(num.pop, num.subc, Sigma, u2, u3, beta, lamzero, gam, th
   return(compare)
 }
 # set.seed(20190419)
-num.pop = 1000; num.subc = 2
+num.pop = 1000; num.subc = 2; k=2
 Sigma = matrix(c(1,0.5,0.5,1), nrow=2)
 u2 = 0; u3 = 0
 beta = c(0.5, 1, 1.2)
 lamzero = c(1, 1.5)
-gam = c(rep(1,num.subc))
+gam = c(rep(1,k))
 theta = 0.25 
 
 beta.compare <- matrix(rep(0,1000*9), ncol=9)
 time.elapse <- system.time(
-
 for (i in 1:1000) {
   set.seed(i)
-  beta.compare[i,] <- calibration(1000,2,Sigma,0,0,beta,lamzero,gam,0.25)
+  beta.compare[i,] <- calibration(1000,100,2,Sigma,0,0,beta,lamzero,gam,0.25)
 }
 )
 
