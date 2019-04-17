@@ -84,7 +84,7 @@ snuma <- 0.2*length(idx.case)
 snumo <- 0.2*length(idx.cont)
 idx.case2 <- sample(idx.case, size=snuma)
 idx.cont2 <- sample(idx.cont, size=snumo)
-idx.sample <- sort(cbind(idx.case2,idx.cont2))
+idx.sample <- sort(c(idx.case2,idx.cont2))
 
 # data.full$contind = c(rep(0,num.pop))
 # data.full$contind[idx.scont2] <- 1                           # contind: indicator for censored subjecrts in the subcohort  
@@ -176,15 +176,15 @@ sum.db <- cbind(data.full, db.sum)
 # long.db <- data.long.db
 # long.db$idx <- c(1:2000) 
 # dstrtx <- twophase(id=list(~idx,~idx), strata=list(NULL,~strt), subset=~in.cch, data=long.db)
-# dcalx <- calibrate(dstrtx, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="linear", eps=0.0001)
+# dcalx <- calibrate(dstrtx, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="raking", eps=0.0001)
 # head(weights(dcalx))
 
 # dstrt1 <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset=~in.cch, data=short.db)
-# dcal1 <- calibrate(dstrt1, formula=make.formula(colnames(db.short)), pop=c(`(Intercept)`=num.pop, colSums(db.short)), calfun="linear", eps=0.0001)
+# dcal1 <- calibrate(dstrt1, formula=make.formula(colnames(db.short)), pop=c(`(Intercept)`=num.pop, colSums(db.short)), calfun="raking", eps=0.0001)
 # weights(dcal1)
 
 dstrt <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset=~in.cch, data=sum.db)
-dcal <- calibrate(dstrt, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="linear", eps=0.0001)
+dcal <- calibrate(dstrt, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="raking", eps=0.0001)
 sample.f <- model.frame(dstrt)
 head(weights(dcal)); head(sample.f)
 calw <- rep(weights(dcal), each=num.subc)
@@ -235,7 +235,7 @@ v.est2 = v.invD%*%v.fit$B%*%v.invD + (1-alpha)*t(vv.db[data.v.db$contind==1,])%*
 #dstrt<-twophase(id=list(~1,~1),strata=list(NULL,~strt),subset=~in.cch,fpc=list(NULL,~fpc),data=data.db)
 dstrt<-twophase(id=list(~1,~1),strata=list(NULL,~strt),subset=~in.cch,data=data.db)
 #dcal = list()
-#dcal<-calibrate(dstrt,formula=make.formula(colnames(db)),pop=c(`(Intercept)`=1000,colSums(db)),calfun="linear",eps=0.0001)
+#dcal<-calibrate(dstrt,formula=make.formula(colnames(db)),pop=c(`(Intercept)`=1000,colSums(db)),calfun="raking",eps=0.0001)
 dcal<-calibrate(dstrt,formula=make.formula(colnames(db)),pop=c(`(Intercept)`=num.pop,colSums(db)),calfun="raking",eps=0.0001)
 
 ##### Using SRS for generated data - Once status=1 (117 patients), selected + 20% of remainder (80*0.2=16 patients) = 113 are selected #####
