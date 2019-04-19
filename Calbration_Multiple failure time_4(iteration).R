@@ -42,12 +42,12 @@ calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam,
   }
   
   ##### Censoring #####
-  # cmax = 2 
+  cmax = 0.025
   censor <- matrix(nrow=num.pop, ncol=k)
   delta <- matrix(nrow=num.pop, ncol=k)
   time_obs <- matrix(nrow=num.pop, ncol=k)
   for (i in 1:k) {
-    censor[,i] = runif(num.pop,0,0.1) #) Modest censoring assumption by Cai and Shen (2000)
+    censor[,i] = cmax*runif(num.pop,0,1) #) Modest censoring assumption by Cai and Shen (2000)
     delta[,i] = (tt[,i]<=censor[,i])*1
     time_obs[,i] = tt[,i]*delta[,i] + censor[,i]*(1-delta[,i])
   }
@@ -62,6 +62,7 @@ calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam,
   # data.full$case[data.full$time < cmax] = 1 cbind(data.full$case,data.full$delta)
   data.full$case = as.numeric(data.full$delta1==1 | data.full$delta2==1)
   num.case = length(unique(data.full$id[data.full$case==1]))
+  num.subc = (num.pop-num.case)*0.1  #subcohort 10% -> alpha=10
   
   alpha = num.subc/(num.pop-num.case)
   data.full$subcind = c(rep(0,num.pop))         # subcohort indicator             
@@ -82,13 +83,6 @@ calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam,
   idx.sample<-sort(c(t(idx.case),t(idx.scont2)))           # idx.sample: ids for cch sample
   #idx.sample<-sort(cbind(t(idx.case2),t(idx.scont2))) 
   
-  # # sampling subcohort controls - 20% of controls and 20% of cases will be selected
-  # snuma <- 0.2*length(idx.case)
-  # snumo <- 0.2*length(idx.cont)
-  # idx.case2 <- sample(idx.case, size=snuma)
-  # idx.cont2 <- sample(idx.cont, size=snumo)
-  # idx.sample <- sort(c(idx.case2,idx.cont2))
-  
   # data.full$contind = c(rep(0,num.pop))
   # data.full$contind[idx.scont2] <- 1                           # contind: indicator for censored subjecrts in the subcohort  
   
@@ -98,9 +92,8 @@ calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam,
   num.in.cch = length(idx.sample) # cch sample size
   
   dstrat <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset = ~in.cch, data=data.full)
-  data.sampled <- model.frame(dstrat)
   # head(data.sampled); str(data.sampled)
-  data.full$subcind <- as.numeric(data.full$id %in% data.sampled$id)
+  # data.full$subcind <- as.numeric(data.full$id %in% idx.sample)
   
   ##### To a long form #####
   idl <- c(rep(1:num.pop, each=k))
@@ -125,109 +118,122 @@ calibration <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam,
       data.long$case[i+1]=0
     }
   }
-  data.long$subcind <- as.vector(t(data.full$subcind))
-  data.long$weight <- as.vector(t(data.full$weight))
-  data.long$in.cch <- as.vector(t(data.full$in.cch))
-  data.long$prob <- as.vector(t(data.full$prob))
-  data.long$strt <- as.vector(t(data.full$strt))
+  # data.long$subcind <- as.vector(t(data.full$subcind))
+  data.long$weight <- rep(data.full$weight, each=k)
+  data.long$in.cch <- rep(data.full$in.cch, each=k)
+  data.long$prob <- rep(data.full$prob, each=k)
+  data.long$strt <- rep(data.full$strt, each=k)
   
   data.long = data.frame(id = idl, time=timel, delta = deltal,
                          c1 = ztemp[,1], c2 = ztemp[,2], c3 = ztemp[,3],
                          subcind=data.long$subcind, weight = data.long$weight, in.cch = data.long$in.cch,
                          prob = data.long$prob, case = data.long$case, strt = data.long$strt)
   
-  ##### Subcohort + long form #####
-  sub.full <- subset(data.full, data.full$id %in% data.sampled$id)
-  sub.full.num <- nrow(sub.full)
-  sub.long <- subset(data.long, data.long$id %in% data.sampled$id)
-  sub.long.num <- nrow(sub.long)
+  ##### Case-cohort + long form #####
+  cch.full <- subset(data.full, data.full$id %in% idx.sample)
+  cch.full.num <- nrow(cch.full)
+  cch.long <- subset(data.long, data.long$id %in% idx.sample)
+  cch.long.num <- nrow(cch.long)
   
   ##### Imputation #####
-  sub.w <- rep(weights(dstrat), each=2)
-  Hmodel <- glm(c2 ~ c3 + c1 + time, weight=sub.w, data=sub.long)
-  # (summary(Hmodel))
+  Hmodel <- glm(c2 ~ c3, weights = weight, data=cch.long)
+  # summary(Hmodel)
   data.long$estH <- as.numeric(predict(Hmodel, type="response", newdata = data.long, se=F)) # using the predicted values only
   # length(which(data.long$in.cch==T))
   data.long$estH[data.long$in.cch==T] <- data.long$c2[data.long$in.cch==T]  # in case using observed values+predicted values
   # length(which(data.long$estH==data.long$c2))
   
   imputed <- list()
-  imputed <- coxph(Surv(time, delta) ~ c1 + estH + c3, cluster(id), data=data.long) # creating auxiliary variables by fitting a full cohort data with imputed values
+  imputed <- coxph(Surv(time, delta) ~ c1 + estH + c3 + cluster(id), data=data.long) # creating auxiliary variables by fitting a full cohort data with imputed values
   # summary(imputed)
   
   ##### Auxiliary variable #####
   # Calibrating
   resid <- residuals(imputed, "dfbeta")
-  invD = qr.solve(imputed$var) #) To Check!
-  db = resid%*%invD #+1            # 1 was added to avoid a computation problem
+  # invD = qr.solve(imputed$var) 
+  # db = resid%*%invD #+1            # 1 was added to avoid a computation problem
   colnames(db) <- paste("db",1:ncol(db),sep="")
   # head(db)
   data.long.db <- cbind(data.long,db) #head(data.long.db)
   
   ##### Back to the short form #####
-  db.short <- cbind(matrix(data.long.db$db1,ncol=k),matrix(data.long.db$db2,ncol=k),matrix(data.long.db$db3,ncol=k))
+  db.short <- cbind(matrix(data.long.db$db1,ncol=k,byrow=TRUE),matrix(data.long.db$db2,ncol=k,byrow=TRUE),
+                    matrix(data.long.db$db3,ncol=k,byrow=TRUE))
   colnames(db.short) <- paste0("db",c(rep(1:ncol(db),each=k)),".",1:k)
-  short.db <- cbind(data.full, db.short)
   
-  db.sum <- cbind(db.short[,1]+db.short[,2],db.short[,3]+db.short[,4])
-  colnames(db.sum) <- paste0("db",1:2)
+  db.sum <- cbind(db.short[,1]+db.short[,2],db.short[,3]+db.short[,4],db.short[,5]+db.short[,6])
+  colnames(db.sum) <- paste0("db",1:3)
   sum.db <- cbind(data.full, db.sum)
   # colSums(db.sum)
   # head(data.db); str(data.db)
   
+  dataxx <- subset(sum.db, sum.db$case==0)
+  ss <- colSums(dataxx[,c(17,18,19)])
+  xxnum <- nrow(dataxx)
+  dataxx$db1 <- dataxx$db1-rep(ss[1]/xxnum,xxnum)
+  dataxx$db2 <- dataxx$db2-rep(ss[2]/xxnum,xxnum)
+  dataxx$db3 <- dataxx$db3-rep(ss[3]/xxnum,xxnum)
+  
   ##### Calibration #####
-  # long.db <- data.long.db
-  # long.db$idx <- c(1:2000) 
-  # dstrtx <- twophase(id=list(~idx,~idx), strata=list(NULL,~strt), subset=~in.cch, data=long.db)
-  # dcalx <- calibrate(dstrtx, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="raking", eps=0.0001)
-  # head(weights(dcalx))
-  
-  # dstrt1 <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset=~in.cch, data=short.db)
-  # dcal1 <- calibrate(dstrt1, formula=make.formula(colnames(db.short)), pop=c(`(Intercept)`=num.pop, colSums(db.short)), calfun="raking", eps=0.0001)
-  # weights(dcal1)
-  
   dstrt <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset=~in.cch, data=sum.db)
-  dcal <- calibrate(dstrt, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=num.pop, colSums(db.sum)), calfun="raking", eps=0.0001)
-  sample.f <- model.frame(dstrt)
+  dcal <- calibrate(dstrt, formula=make.formula(colnames(db.sum)), pop=c(`(Intercept)`=0, colSums(db.sum)), calfun="raking", eps=0.0001)
+  data.dstrt <- cbind(model.frame(dstrt), calw=weights(dcal))
   # head(weights(dcal)); head(sample.f)
-  calw <- rep(weights(dcal), each=k)
-  # calw[calw<0]
+  # calw <- rep(weights(dcal), each=k)
+  # cch.final <- cbind(cch.long, calw)
+  cch.final <- merge(cch.long, data.dstrt[,c(1,20)])
   
+  designx <- twophase(id=list(~1,~1), strata=list(NULL,~strt), subset=~in.cch, data=dataxx)
+  calx <- calibrate(designx, formula=make.formula(colnames(db.sum)),
+                    pop=c(`(Intercept)`=0, colSums(db.sum)), calfun="raking",
+                    eps=0.00001)
+  datax <- cbind(model.frame(designx), calwx=weights(calx))
+  datax2 <- cbind(subset(sum.db, sum.db$case==1), calwx=rep(1, nrow(subset(cch.full, cch.full$case==1))))
+  data.cx <- rbind(datax, datax2)
+  data.mx <- as.data.frame(merge(cch.long, data.cx[,c(1,20)]))
+  # which(data.mx$calwx<0)
+ 
   ##### Fitting to Cox regression for multiple failure time data #####
-  #Final data
-  sub.f <- subset(data.long, data.long$id %in% sample.f$id==1)
-  # length(which(calw<0))
-  # min(calw[calw>0])
-  # calw[calw<0] <- 0.0001
-  data.long.f <- cbind(sub.f, calw) #str(data.long.f)
-  
   base_model <- coxph(Surv(time, delta) ~ c1+c2+c3, weights=weight, data=data.long.f)
-  # (summary(base_model))
-  
-  model_cal <- coxph(Surv(time, delta) ~ c1+c2+c3, weights=calw, data=data.long.f)
-  # (summary(model_cal))
+  # summary(base_model)
+ 
+  model_cal <- coxph(Surv(time, delta) ~ c1+c2+c3+cluster(id), weights=calw, data=cch.final)
+  model_cal2 <- coxph(Surv(time, delta) ~ c1+c2+c3+cluster(id), weights=calwx, data=data.mx)
+  # summary(model_cal)
   
   compare <- c(beta, base_model$coefficients, model_cal$coefficients)
-  # colnames(compare) <- c("beta0", "Traditional", "Calibrated") 
   return(compare)
+  # return(compare2)
 }
-# set.seed(20190419)
-num.pop = 1000; num.subc = 2; k=2
-Sigma = matrix(c(1,0.5,0.5,1), nrow=2)
-u2 = 0; u3 = 0
-beta = c(0.5, 1, 1.2)
-lamzero = c(1, 1.5)
-gam = c(rep(1,k))
-theta = 0.25 
 
+# set.seed(20190419)
+# num.pop = 1000; num.subc = 2; k=2
+# Sigma = matrix(c(1,0.5,0.5,1), nrow=2)
+# u2 = 0; u3 = 0
+# beta = c(0.5, 1, 1.2)
+# lamzero = c(1, 1.5)
+# gam = c(rep(1,k))
+# theta = 0.25 
+
+result <- function(data) {
+  beta.mean <- matrix(apply(data,2,mean), ncol=3)
+  beta.var <- matrix(apply(data,2,var), ncol=3)
+  colnames(beta.mean) <- c("True", "Traditional", "Calibrated")
+  rownames(beta.mean) <- c("beta1", "beta2", "beta3")
+  colnames(beta.var) <- c("True", "Traditional", "Calibrated")
+  rownames(beta.var) <- c("beta1", "beta2", "beta3")
+  return(list(mean=beta.mean,variance=beta.var))
+}
+
+Sigma = matrix(c(1,0.7,0.7,1), nrow=2); beta = c(0.5, 1, 1.2)
+lamzero = c(1, 1.5); gam = c(rep(1,2)); theta = 0.25 
+
+set.seed(2019)
 beta.compare <- matrix(rep(0,1000*9), ncol=9)
 time.elapse <- system.time(
 for (i in 1:1000) {
-  set.seed(i)
   beta.compare[i,] <- calibration(1000,100,2,Sigma,0,0,beta,lamzero,gam,0.25)
 }
 )
 
-head(beta.compare)
-apply(beta.compare,2,mean)
-apply(beta.compare,2,var)
+result(beta.compare)
