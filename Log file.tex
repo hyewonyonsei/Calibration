@@ -1,0 +1,73 @@
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+
+\newcommand{\E}{\mathop{\rm E}\nolimits} %expectation
+\newcommand{\SE}{\mathop{\rm SE}\nolimits} %Standard Errors
+\newcommand{\Var}{\mathop{\rm Var}\nolimits} %variance
+\newcommand{\var}{\mathop{\rm var}\nolimits} %variance
+
+\pagestyle{plain}
+\setcounter{secnumdepth}{0}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+%\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+%\input{tcilatex}
+\begin{document}
+
+\begin{center}
+{\Large LOG: COX-MUL-CALB}
+
+%{\Large Homework 2}
+
+%\textbf{Due: }Wednesday, April 10, 2019
+\end{center}
+
+\begin{itemize}
+	\item[{\bf 2019-05-14}] Calibration of additional terms
+
+	\begin{enumerate} 
+		 \item In $U_{ik}(\beta)$ where $U(\beta) = \sum_{i,k}w_i U_{ik}(\beta)$ is the weighted estimating equations, 
+		 two terms contain weights $w_i$s:
+		 \[
+		 	\sum w_iY_{ik}(t)\exp(\beta^{\prime} Z_{ik}) \mbox{ and } \sum w_iY_{ik}(t)Z_{ik}\exp(\beta^{\prime} Z_{ik})
+		 \] 
+		 
+		 \item These two terms might also need to be calibrated.
+		 
+		 \item Add these two terms in the short dataset for calibration.
+		 
+		 \item In R, modify the R file \texttt{Calbration}$\_$\texttt{Multiple }\texttt{failure }\texttt{time}$\_$\texttt{4(iteration).R} in Github (as of 2019-05-14),
+		 \begin{enumerate}
+		 	\item Create a column for $Y_{ik}(t)\exp(\beta^{\prime} Z_{ik})$ and 3 columns (since we have 3 covariates) for $Y_{ik}(t)Z_{ik}\exp(\beta^{\prime} Z_{ik})$;
+		 	
+		 	\item add them within each subject to get a short form of data (after Line 176)
+		 	
+		 	\item Modify the calibrate function part (Line 179) - formula and pop arguments
+		 \end{enumerate}
+		 
+	\end{enumerate}
+\end{itemize}	
+
+\end{document}
