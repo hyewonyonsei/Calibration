@@ -250,71 +250,111 @@ time.elapse <- system.time(
     sim1.2[i,] <- calibration(data,1,1,2,2)
   }
 )
-result(sim1.1) 
-result(sim1.2)
-
+cat("sim1.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim1.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim1.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim1.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 
 # Compare the results with various combinations of paremeter choices
 # See the result for both op4=1 and 2 when changing a parameter
-# Simulation 2: Simulation 1 + censoring rate 80 (cmax=0.35) -> 90 (cmax=0.12)
-sim2.1 <- matrix(rep(0,nsim*9), ncol=9)
-sim2.2 <- matrix(rep(0,nsim*9), ncol=9)
+# Simulation 2,3: censoring 80, subcohort 100 + rho 0.5 / 0.9
+sim2.1 <- matrix(rep(0,nsim*9), ncol=9); sim2.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim3.1 <- matrix(rep(0,nsim*9), ncol=9); sim3.2 <- matrix(rep(0,nsim*9), ncol=9)
+Sigma2 = matrix(c(1,0.5,0.5,1), nrow=2); Sigma3 = matrix(c(1,0.9,0.9,1), nrow=2)
 time.elapse <- system.time(
   for (i in 1:nsim) {
-    data2 <- datagen(1000,100,2,Sigma,0,0,beta,lamzero,gam,0.25, 0.12)
+    data2 <- datagen(1000,100,2,Sigma2,0,0,beta,lamzero,gam,0.25,0.35)
+    data3 <- datagen(1000,100,2,Sigma3,0,0,beta,lamzero,gam,0.25,0.35)
     sim2.1[i,] <- calibration(data2,1,1,2,1)
-    sim2.2[i,] <- calibration(data2,1,1,2,2)
-  }
-)
-result(sim2.1)
-result(sim2.2)
-
-# Simulation 3: Simulation 1 + sub cohort 200
-nsim = 2000
-sim3.1 <- matrix(rep(0,nsim*9), ncol=9)
-sim3.2 <- matrix(rep(0,nsim*9), ncol=9)
-time.elapse <- system.time(
-  for (i in 1:nsim) {
-    data3 <- datagen(1000,200,2,Sigma,0,0,beta,lamzero,gam,0.25,0.35)
-    sim3.1[i,] <- calibration(data3,1,1,2,1)
+    sim2.2[i,] <- calibration(data3,1,1,2,1)
+    sim3.1[i,] <- calibration(data2,1,1,2,2)
     sim3.2[i,] <- calibration(data3,1,1,2,2)
   }
 )
-result(sim3.1)
-result(sim3.2)
+cat("sim2.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim2.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim2.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim2.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim3.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim3.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim3.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim3.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 
-# Simulation 4: Simulation 1 + Sigma rho 0.5, 0.8, 0.9
-sim4.1.1 <- matrix(rep(0,nsim*9), ncol=9)
-sim4.1.2 <- matrix(rep(0,nsim*9), ncol=9)
-sim4.2.1 <- matrix(rep(0,nsim*9), ncol=9)
-sim4.2.2 <- matrix(rep(0,nsim*9), ncol=9)
-Sigma4.1 = matrix(c(1,0.5,0.5,1), nrow=2)
-Sigma4.2 = matrix(c(1,0.9,0.9,1), nrow=2)
+# Simulation 4,5,6: censoring 80 + sub cohort 100 -> 200 + rho 0.8 / 0.5 / 0.9
+sim4.1 <- matrix(rep(0,nsim*9), ncol=9); sim4.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim5.1 <- matrix(rep(0,nsim*9), ncol=9); sim5.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim6.1 <- matrix(rep(0,nsim*9), ncol=9); sim6.2 <- matrix(rep(0,nsim*9), ncol=9)
 time.elapse <- system.time(
   for (i in 1:nsim) {
-    data4.1 <- datagen(1000,100,2,Sigma4.1,0,0,beta,lamzero,gam,0.25,0.35)
-    data4.2 <- datagen(1000,100,2,Sigma4.2,0,0,beta,lamzero,gam,0.25,0.35)
-    sim4.1.1[i,] <- calibration(data4.1,1,1,2,1)
-    sim4.1.2[i,] <- calibration(data4.2,1,1,2,1)
-    sim4.2.1[i,] <- calibration(data4.1,1,1,2,2)
-    sim4.2.2[i,] <- calibration(data4.2,1,1,2,2)
+    data4 <- datagen(1000,200,2,Sigma,0,0,beta,lamzero,gam,0.25,0.35)
+    data5 <- datagen(1000,200,2,Sigma2,0,0,beta,lamzero,gam,0.25,0.35)
+    data6 <- datagen(1000,200,2,Sigma3,0,0,beta,lamzero,gam,0.25,0.35)
+    sim4.1[i,] <- calibration(data4,1,1,2,1)
+    sim4.2[i,] <- calibration(data4,1,1,2,2)
+    sim5.1[i,] <- calibration(data5,1,1,2,1)
+    sim5.2[i,] <- calibration(data5,1,1,2,2)
+    sim6.1[i,] <- calibration(data6,1,1,2,1)
+    sim6.2[i,] <- calibration(data6,1,1,2,2)
   }
 )
-result(sim4.1.1);result(sim4.1.2)
-result(sim4.2.1);result(sim4.2.2)
+cat("sim4.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim4.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim4.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim4.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim5.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim5.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim5.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim5.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim6.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim6.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim6.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim6.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 
-# Simulation 5: Simulation 1 + theta 1.5 (paper)
-sim5.1 <- matrix(rep(0,nsim*9), ncol=9)
-sim5.2 <- matrix(rep(0,nsim*9), ncol=9)
+# Simulation 7,8,9: censoring 80 (cmax=0.35) -> 90 (cmax=0.12) + sub cohort 100, rho 0.8 / 0.5 / 0.9
+sim7.1 <- matrix(rep(0,nsim*9), ncol=9); sim7.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim8.1 <- matrix(rep(0,nsim*9), ncol=9); sim8.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim9.1 <- matrix(rep(0,nsim*9), ncol=9); sim9.2 <- matrix(rep(0,nsim*9), ncol=9)
 time.elapse <- system.time(
   for (i in 1:nsim) {
-    data5 <- datagen(1000,100,2,Sigma4.1,0,0,beta,lamzero,gam,1.5,0.35)WW
-    sim5.1[i,] <- calibration(data4.1,1,1,2,1)
-    sim5.2[i,] <- calibration(data4.2,1,1,2,1)
+    data7 <- datagen(1000,200,2,Sigma,0,0,beta,lamzero,gam,0.25,0.35)
+    data8 <- datagen(1000,200,2,Sigma2,0,0,beta,lamzero,gam,0.25,0.35)
+    data9 <- datagen(1000,200,2,Sigma3,0,0,beta,lamzero,gam,0.25,0.35)
+    sim7.1[i,] <- calibration(data7,1,1,2,1)
+    sim7.2[i,] <- calibration(data7,1,1,2,2)
+    sim8.1[i,] <- calibration(data8,1,1,2,1)
+    sim8.2[i,] <- calibration(data8,1,1,2,2)
+    sim9.1[i,] <- calibration(data9,1,1,2,1)
+    sim9.2[i,] <- calibration(data9,1,1,2,2)
   }
 )
-result(sim5.1);result(sim5.2)
+cat("sim7.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim7.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim7.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim7.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim8.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim8.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim8.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim8.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim9.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim9.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim9.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim9.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 
-# Real data: stroke & cardiovascular disease - only for cch 
-# Should be modeled by variables available for all subjects - See the papers
-# Handling required
+# Simulation 10,11,12: censoring 80 (cmax=0.35) -> 90 (cmax=0.12) + sub cohort 100 -> 200, rho 0.8 / 0.5 / 0.9
+sim10.1 <- matrix(rep(0,nsim*9), ncol=9); sim10.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim11.1 <- matrix(rep(0,nsim*9), ncol=9); sim11.2 <- matrix(rep(0,nsim*9), ncol=9)
+sim12.1 <- matrix(rep(0,nsim*9), ncol=9); sim12.2 <- matrix(rep(0,nsim*9), ncol=9)
+time.elapse <- system.time(
+  for (i in 1:nsim) {
+    data10 <- datagen(1000,200,2,Sigma,0,0,beta,lamzero,gam,0.25,0.35)
+    data11 <- datagen(1000,200,2,Sigma2,0,0,beta,lamzero,gam,0.25,0.35)
+    data12 <- datagen(1000,200,2,Sigma3,0,0,beta,lamzero,gam,0.25,0.35)
+    sim10.1[i,] <- calibration(data10,1,1,2,1)
+    sim10.2[i,] <- calibration(data10,1,1,2,2)
+    sim11.1[i,] <- calibration(data11,1,1,2,1)
+    sim11.2[i,] <- calibration(data11,1,1,2,2)
+    sim12.1[i,] <- calibration(data12,1,1,2,1)
+    sim12.2[i,] <- calibration(data12,1,1,2,2)
+  }
+)
+cat("sim10.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim10.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim10.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim10.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim11.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim11.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim11.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim11.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim12.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim12.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim12.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim12.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+
+# Simulation 20: Simulation 1 + theta 1.5 (paper)
+sim20.1 <- matrix(rep(0,nsim*9), ncol=9)
+sim20.2 <- matrix(rep(0,nsim*9), ncol=9)
+time.elapse <- system.time(
+  for (i in 1:nsim) {
+    data20 <- datagen(1000,100,2,Sigma,0,0,beta,lamzero,gam,1.5,0.35)
+    sim20.1[i,] <- calibration(data20,1,1,2,1)
+    sim20.2[i,] <- calibration(data20,1,1,2,1)
+  }
+)
+cat("sim20.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim20.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim20.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim20.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
