@@ -43,7 +43,7 @@ datagen <- function(num.pop, num.subc, k, Sigma, u2, u3, beta, lamzero, gam, the
   delta <- matrix(nrow=num.pop, ncol=k)
   time_obs <- matrix(nrow=num.pop, ncol=k)
   for (i in 1:k) {
-    censor[,i] = cmax*runif(num.pop,0,0.1) #) Modest censoring assumption by Cai and Shen (2000)
+    censor[,i] = cmax[i]*runif(num.pop,0,0.1) #) Modest censoring assumption by Cai and Shen (2000)
     delta[,i] = (tt[,i]<=censor[,i])*1
     time_obs[,i] = tt[,i]*delta[,i] + censor[,i]*(1-delta[,i])
   }
@@ -136,6 +136,8 @@ calibration <- function(data, op1, op2, op3, op4) {
   cch.full <- data[[3]]
   cch.long <- data[[4]]
   p=3; k=2
+  ccc <- data[[4]]
+  nrow(ccc[ccc$strt==2,])
   ##### Imputation #####
   if (op1==1) {glmdata=cch.long} else if (op1==2) {glmdata=cch.long[cch.long$strt==2,]}
   if (op2==1) {Hmodel <- glm(c2 ~ c3, weight=weight, data=glmdata)} 
@@ -224,7 +226,7 @@ result <- function(data) {
   return(list(mean=beta.mean,variance=beta.var))
 }
 
-# rm(list="data.long"); rm(list=ls())
+# rm(list="result1.1"); rm(list=ls())
 
 # For all simulation
 # num.pop = 1000; num.subc = 100; k=2
@@ -270,8 +272,8 @@ time.elapse <- system.time(
   }
 )
 cat("sim2.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim2.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
-cat("sim2.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim2.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
-cat("sim3.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim3.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim2.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim3.1),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
+cat("sim3.1","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim2.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 cat("sim3.2","\n",file="C:/Users/absol/Desktop/sim.txt",append=TRUE);capture.output(result(sim3.2),file="C:/Users/absol/Desktop/sim.txt",append=TRUE)
 
 # Simulation 4,5,6: censoring 80 + sub cohort 100 -> 200 + rho 0.8 / 0.5 / 0.9

@@ -1,0 +1,312 @@
+sim2.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5068675  0.5031025
+beta2  1.0   1.0169006  1.0149056
+beta3  1.2   1.2197461  1.1988734
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.07200882 0.04427789
+beta2    0  0.02378762 0.02313728
+beta3    0  0.02461563 0.01458473
+
+sim1.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5033673  0.5005564
+beta2  1.0   1.0094513  1.0045044
+beta3  1.2   1.2051722  1.1964906
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.06242941 0.03106302
+beta2    0  0.04416500 0.04240487
+beta3    0  0.04365910 0.02746947
+
+sim3.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5058028  0.5045658
+beta2  1.0   1.0197569  1.0146220
+beta3  1.2   1.2029827  1.1939960
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.06035276 0.02641098
+beta2    0  0.07812729 0.07487606
+beta3    0  0.07794670 0.05729436
+
+sim2.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5068675   0.504014
+beta2  1.0   1.0169006   1.028308
+beta3  1.2   1.2197461   1.192634
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.07200882 0.04913612
+beta2    0  0.02378762 0.02552950
+beta3    0  0.02461563 0.01485228
+
+sim1.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5033673  0.5013792
+beta2  1.0   1.0094513  1.0160075
+beta3  1.2   1.2051722  1.1849328
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.06242941 0.03304312
+beta2    0  0.04416500 0.04855650
+beta3    0  0.04365910 0.02955641
+
+sim3.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5058028  0.5058941
+beta2  1.0   1.0197569  1.0227530
+beta3  1.2   1.2029827  1.1840704
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.06035276 0.02745877
+beta2    0  0.07812729 0.08572778
+beta3    0  0.07794670 0.06353846
+
+sim5.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5    0.498078  0.5004607
+beta2  1.0    1.008889  1.0070825
+beta3  1.2    1.205624  1.1961219
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04503332 0.03326221
+beta2    0  0.01588561 0.01553651
+beta3    0  0.01747215 0.01268000
+
+sim4.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4995742  0.4984411
+beta2  1.0   1.0007115  0.9983251
+beta3  1.2   1.2056901  1.1969655
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04074852 0.02638267
+beta2    0  0.02988972 0.02905131
+beta3    0  0.03021663 0.02182799
+
+sim6.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5039244  0.5028196
+beta2  1.0   1.0068116  1.0039347
+beta3  1.2   1.2018008  1.1976558
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03864539 0.02290050
+beta2    0  0.05167541 0.05042389
+beta3    0  0.05214987 0.04195918
+
+sim5.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5    0.498078  0.5007688
+beta2  1.0    1.008889  1.0137525
+beta3  1.2    1.205624  1.1921537
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04503332 0.03457575
+beta2    0  0.01588561 0.01600327
+beta3    0  0.01747215 0.01272251
+
+sim4.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4995742  0.4995127
+beta2  1.0   1.0007115  1.0057025
+beta3  1.2   1.2056901  1.1895771
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04074852 0.02732647
+beta2    0  0.02988972 0.03053241
+beta3    0  0.03021663 0.02231479
+
+sim6.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5039244  0.5029855
+beta2  1.0   1.0068116  1.0090147
+beta3  1.2   1.2018008  1.1913513
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03864539 0.02349652
+beta2    0  0.05167541 0.05337995
+beta3    0  0.05214987 0.04395445
+
+sim8.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5041001  0.5041079
+beta2  1.0   1.0071520  1.0050591
+beta3  1.2   1.2053128  1.1950396
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04741978 0.03204872
+beta2    0  0.01616818 0.01587734
+beta3    0  0.01616883 0.01156481
+
+sim7.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5003577  0.5002010
+beta2  1.0   1.0019435  0.9992944
+beta3  1.2   1.2051961  1.1985664
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03977278 0.02556588
+beta2    0  0.02761571 0.02684413
+beta3    0  0.02830569 0.02089978
+
+sim9.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4963282  0.4958816
+beta2  1.0   0.9994145  0.9974001
+beta3  1.2   1.2088433  1.2007370
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03728729 0.02250922
+beta2    0  0.05288160 0.05175424
+beta3    0  0.05146608 0.04113377
+
+sim8.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5041001  0.5049709
+beta2  1.0   1.0071520  1.0118123
+beta3  1.2   1.2053128  1.1919108
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04741978 0.03329817
+beta2    0  0.01616818 0.01599792
+beta3    0  0.01616883 0.01175284
+
+sim7.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5003577  0.4995949
+beta2  1.0   1.0019435  1.0053856
+beta3  1.2   1.2051961  1.1924454
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03977278 0.02622797
+beta2    0  0.02761571 0.02859409
+beta3    0  0.02830569 0.02149836
+
+sim9.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4963282  0.4966234
+beta2  1.0   0.9994145  1.0025094
+beta3  1.2   1.2088433  1.1949863
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03728729 0.02351371
+beta2    0  0.05288160 0.05559110
+beta3    0  0.05146608 0.04294048
+
+sim11.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4933775  0.4955946
+beta2  1.0   1.0070096  1.0056085
+beta3  1.2   1.2059893  1.1948442
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04377872 0.03197716
+beta2    0  0.01668082 0.01626161
+beta3    0  0.01634650 0.01189098
+
+sim10.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5008318  0.4986209
+beta2  1.0   0.9993345  0.9976687
+beta3  1.2   1.2116075  1.2018809
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03887967 0.02510170
+beta2    0  0.02993057 0.02901078
+beta3    0  0.02961059 0.02169644
+
+sim12.1 
+$mean
+      True Traditional Calibrated
+beta1  0.5    0.498989  0.4989536
+beta2  1.0    1.004308  1.0018680
+beta3  1.2    1.205016  1.1966124
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04076823 0.02427119
+beta2    0  0.04818528 0.04718580
+beta3    0  0.04895782 0.03940193
+
+sim11.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.4933775   0.496895
+beta2  1.0   1.0070096   1.012374
+beta3  1.2   1.2059893   1.190894
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04377872 0.03303098
+beta2    0  0.01668082 0.01647814
+beta3    0  0.01634650 0.01197719
+
+sim10.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5   0.5008318  0.4990449
+beta2  1.0   0.9993345  1.0033212
+beta3  1.2   1.2116075  1.1959599
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.03887967 0.02628132
+beta2    0  0.02993057 0.03061613
+beta3    0  0.02961059 0.02194535
+
+sim12.2 
+$mean
+      True Traditional Calibrated
+beta1  0.5    0.498989  0.4989395
+beta2  1.0    1.004308  1.0073706
+beta3  1.2    1.205016  1.1899818
+
+$variance
+      True Traditional Calibrated
+beta1    0  0.04076823 0.02459475
+beta2    0  0.04818528 0.05040506
+beta3    0  0.04895782 0.04135316
+
